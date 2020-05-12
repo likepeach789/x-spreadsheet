@@ -4,89 +4,122 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>x-spreadsheet</title>
-    
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.15/lodash.min.js"></script>
+  lodash.js
 <link href="xspreadsheet.css" rel="stylesheet"></head>
 <body onload="load()">
-  <div style="position: fixed; right: 0; top: .3em;">
-  <iframe src="https://ghbtns.com/github-btn.html?user=myliang&repo=x-spreadsheet&type=star&count=true&size=large" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
-  </div>
+  <textarea></textarea> <button id="btn">click</button>
   <div id="x-spreadsheet-demo"></div>
   <script>
     function load(){
-      const rows10 = { len: 100000 };
-      for (let i = 0; i < 100000; i += 1) {
+      const rows10 = { len: 15 };
+      for (let i = 0; i < 15; i += 1) {
         rows10[i] = {
+          __id__: i,
           cells: {
-            0: { text: 'A-' + i },
-            1: { text: 'B-' + i },
-            2: { text: 'C-' + i },
-            3: { text: 'D-' + i },
-            4: { text: 'E-' + i },
-            5: { text: 'F-' + i },
+            // 0: { text: 'A-' + i },
+            // 1: { text: 'B-' + i },
+            // 2: { text: 'C-' + i },
+            // 3: { text: 'D-' + i },
+            // 4: { text: 'E-' + i },
+            // 5: { text: 'E-' + i },
           }
         };
-      }
-      const rows = {
-        len: 80,
-        1: {
-          cells: {
-            0: { text: 'testingtesttestetst' },
-            2: { text: 'testing' },
-          },
-        },
-        2: {
-          cells: {
-            0: { text: 'render', style: 0 },
-            1: { text: 'Hello' },
-            2: { text: 'haha', merge: [1, 1] },
-          }
-        },
-        8: {
-          cells: {
-            8: { text: 'border test', style: 0 },
-          }
+
+        for(let j = 0; j < 10; j++) {
+          rows10[i].cells[j] = {text:'AA' + j};
         }
-      };
+      }
+      let copyRows = _.cloneDeep(rows10);
+      // console.log(JSON.stringify(rows10));
+      
       // x_spreadsheet.locale('zh-cn');
-      var xs = x_spreadsheet('#x-spreadsheet-demo', {showToolbar: true, showGrid: true})
+      var xs = x_spreadsheet('#x-spreadsheet-demo', {showToolbar: false, showGrid: true, showBottomBar: false})
         .loadData([{
-          freeze: 'B3',
-          styles: [
-            {
-              bgcolor: '#f4f5f8',
-              textwrap: true,
-              color: '#900b09',
-              border: {
-                top: ['thin', '#0366d6'],
-                bottom: ['thin', '#0366d6'],
-                right: ['thin', '#0366d6'],
-                left: ['thin', '#0366d6'],
-              },
-            },
-          ],
-          merges: [
-            'C3:D4',
-          ],
+          // freeze: 'B3',
+          headers: ['AAA', 'BBB', 'CCC','DDD'],
+          // styles: [
+          //   {
+          //     bgcolor: '#f4f5f8',
+          //     textwrap: true,
+          //     color: '#900b09',
+          //     border: {
+          //       top: ['thin', '#0366d6'],
+          //       bottom: ['thin', '#0366d6'],
+          //       right: ['thin', '#0366d6'],
+          //       left: ['thin', '#0366d6'],
+          //     },
+          //   },
+          // ],
+          // merges: [
+          //   'C3:D4',
+          // ],
           cols: {
             len: 10,
-            2: { width: 200 },
+            // 2: { width: 200 },
           },
-          rows,
-        }, { name: 'sheet-test', rows: rows10 }]).change((cdata) => {
-          // console.log(cdata);
-          console.log('>>>', xs.getData());
-        });
+          rows: rows10,
+        }]);
 
-      xs.on('cell-selected', (cell, ri, ci) => {
-          console.log('cell:', cell, ', ri:', ri, ', ci:', ci);
-        }).on('cell-edited', (text, ri, ci) => {
+        xs.on('cell-edited', (text, ri, ci) => {
           console.log('text:', text, ', ri: ', ri, ', ci:', ci);
+          // var data = xs.getData();
+          // console.log(data);
         });
 
-      setTimeout(() => {
-        // xs.loadData([{ rows }]);
-        xs.cellText(14, 3, 'cell-text').reRender();
-      }, 5000);
+
+        document.querySelector("#btn").addEventListener('click', function() {
+          var sheets = xs.getData();
+          var sheet = sheets[0];
+          console.log(sheet);
+          var colLen = sheet.cols.len;
+          // console.log(JSON.stringify(sheet.rows));
+          // console.log(sheet.rows);
+          var arr = [];
+          _.forOwn(sheet.rows, (value, key) => {
+            let row = [];
+            if(typeof value == 'object' && value.cells) {
+              row[0] = value.__id__;
+              for(let i = 0 ; i < colLen; i++) {
+                if(value.cells[i]) {
+                  row[i+1] = value.cells[i].text;
+                } else {
+                  row[i+1] = null;
+                }
+              }
+              arr.push(row);
+            }
+            
+          });
+          let origin = [];
+          _.forOwn(copyRows, (value, key) => {
+            let row = [];
+            if(typeof value == 'object' && value.cells) {
+              row[0] = value.__id__;
+              for(let i = 0 ; i < colLen; i++) {
+                  if(value.cells[i]) {
+                    row[i+1] = value.cells[i].text;
+                  } else {
+                    row[i+1] = null;
+                  }
+              }
+              origin.push(row);
+            }
+            
+          });
+
+          console.log(arr);
+          console.log(origin);
+          // var newChange = _.differenceWith(arr, origin, _.isEqual);
+          // var oldChange = _.differenceWith(origin, arr, _.isEqual);
+          // console.log('newChange', newChange);
+          // console.log('oldChange', oldChange);
+        })
+
+      // setTimeout(() => {
+      //   // xs.loadData([{ rows }]);
+      //   xs.cellText(14, 3, 'cell-text').reRender();
+      // }, 5000);
     }
   </script>
   <!--script type="text/javascript" src="https://unpkg.com/x-data-spreadsheet@1.0.20/dist/locale/zh-cn.js"></script-->
