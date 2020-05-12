@@ -488,7 +488,9 @@ function insertDeleteRowColumn(type) {
   const { data } = this;
   if (type === 'insert-row') {
     data.insert('row');
-  } else if (type === 'delete-row') {
+  } else if(type === 'insert-thousand-row') {
+    data.insert('row', 1000);
+  }else if (type === 'delete-row') {
     data.delete('row');
   } else if (type === 'insert-column') {
     data.insert('column');
@@ -893,6 +895,12 @@ export default class Sheet {
     sheetReset.call(this);
     // init selector [0, 0]
     selectorSet.call(this, false, 0, 0);
+    
+    // comment by chong
+    // setTimeout(() => {
+    //   this.verticalScrollbar.el.el.scrollTop = 24800;
+    //   console.log(this.verticalScrollbar.el.scrollTop);
+    // });
   }
 
   on(eventName, func) {

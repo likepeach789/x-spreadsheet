@@ -276,6 +276,7 @@ body {
   line-height: 0;
   z-index: 100;
   pointer-events: auto;
+  background-color: white;
 }
 .x-spreadsheet-editor .x-spreadsheet-editor-area textarea {
   box-sizing: content-box;

@@ -77,6 +77,7 @@ const defaultSettings = {
   showGrid: true,
   showToolbar: true,
   showContextmenu: true,
+  showBottomBar: true,
   row: {
     len: 100,
     height: 25,
@@ -389,15 +390,15 @@ export default class DataProxy {
   }
 
   undo() {
-    this.history.undo(this.getData(), (d) => {
-      this.setData(d);
-    });
+    // this.history.undo(this.getData(), (d) => {
+    //   this.setData(d);
+    // });
   }
 
   redo() {
-    this.history.redo(this.getData(), (d) => {
-      this.setData(d);
-    });
+    // this.history.redo(this.getData(), (d) => {
+    //   this.setData(d);
+    // });
   }
 
   copy() {
@@ -936,7 +937,7 @@ export default class DataProxy {
     const { rows, history, validations } = this;
     if (state === 'finished') {
       rows.setCellText(ri, ci, '');
-      history.add(this.getData());
+      // history.add(this.getData());
       rows.setCellText(ri, ci, text);
     } else {
       rows.setCellText(ri, ci, text);
@@ -1127,7 +1128,7 @@ export default class DataProxy {
   }
 
   changeData(cb) {
-    this.history.add(this.getData());
+    // this.history.add(this.getData());
     cb();
     this.change(this.getData());
   }

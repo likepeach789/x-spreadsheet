@@ -3,6 +3,7 @@ import { h } from './component/element';
 import DataProxy from './core/data_proxy';
 import Sheet from './component/sheet';
 import Bottombar from './component/bottombar';
+import helper from './core/helper';
 import { cssPrefix } from './config';
 import { locale } from './locale/locale';
 import './index.less';
@@ -10,8 +11,11 @@ import './index.less';
 
 class Spreadsheet {
   constructor(selectors, options = {}) {
+    let defaultOptions = {
+      showBottomBar: true
+    }
     let targetEl = selectors;
-    this.options = options;
+    this.options = helper.merge(defaultOptions, options);
     this.sheetIndex = 1;
     this.datas = [];
     if (typeof selectors === 'string') {
@@ -34,7 +38,10 @@ class Spreadsheet {
     // create canvas element
     targetEl.appendChild(rootEl.el);
     this.sheet = new Sheet(rootEl, this.data);
-    rootEl.child(this.bottombar.el);
+    if(this.options.showBottomBar) {
+      rootEl.child(this.bottombar.el);
+    }
+    
   }
 
   addSheet(name, active = true) {
